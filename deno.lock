@@ -142,15 +142,17 @@
     }
   },
   "workspace": {
-    "dependencies": [
-      "npm:@types/glob-to-regexp@~0.4.4",
-      "npm:@types/istanbul-lib-coverage@^2.0.6",
-      "npm:@types/yargs@^17.0.33",
-      "npm:glob-to-regexp@~0.4.1",
-      "npm:istanbul-lib-coverage@^3.2.2",
-      "npm:v8-to-istanbul@^9.3.0",
-      "npm:yargs@^17.7.2",
-      "npm:zod@^3.24.1"
-    ]
+    "packageJson": {
+      "dependencies": [
+        "npm:@types/glob-to-regexp@~0.4.4",
+        "npm:@types/istanbul-lib-coverage@^2.0.6",
+        "npm:@types/yargs@^17.0.33",
+        "npm:glob-to-regexp@~0.4.1",
+        "npm:istanbul-lib-coverage@^3.2.2",
+        "npm:v8-to-istanbul@^9.3.0",
+        "npm:yargs@^17.7.2",
+        "npm:zod@^3.24.1"
+      ]
+    }
   }
 }

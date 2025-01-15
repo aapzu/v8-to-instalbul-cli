@@ -1,9 +1,7 @@
-import fs from "node:fs";
 import yargs from "yargs";
 import v8toIstanbul from "v8-to-istanbul";
 import libCoverage from "istanbul-lib-coverage";
 import { z } from "zod";
-import path from "node:path";
 import globToRegex from "glob-to-regexp";
 
 const v8CoverageJsonSchema = z.object({
@@ -53,15 +51,25 @@ const { coveragePath, output, exclude } = yargs(Deno.args)
 
 const map = libCoverage.createCoverageMap();
 
-const coverageJsonFiles = fs.statSync(coveragePath).isDirectory()
-  ? fs
-      .readdirSync(coveragePath)
-      .filter((file) => file.startsWith("coverage") && file.endsWith(".json"))
-      .map((file) => path.join(coveragePath, file))
-  : [coveragePath];
+const coverageJsonFiles = [];
 
-const coverages = coverageJsonFiles.map((filePath) =>
-  v8CoverageJsonSchema.parse(JSON.parse(fs.readFileSync(filePath, "utf-8")))
+if ((await Deno.stat(coveragePath)).isDirectory) {
+  for await (const file of Deno.readDir(coveragePath)) {
+    if (file.name.startsWith("coverage") && file.name.endsWith(".json")) {
+      coverageJsonFiles.push(`${coveragePath}/${file.name}`);
+    }
+  }
+} else {
+  coverageJsonFiles.push(coveragePath);
+}
+
+const coverages = await Promise.all(
+  coverageJsonFiles.map(async (filePath) => {
+    const coverageJsonUintArray = await Deno.readFile(filePath);
+    return v8CoverageJsonSchema.parse(
+      JSON.parse(new TextDecoder().decode(coverageJsonUintArray))
+    );
+  })
 );
 
 const fileResults = coverages.flatMap((coverage) =>
