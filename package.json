@@ -10,14 +10,20 @@
     "v82i": "./bin/v8-to-istanbul-cli"
   },
   "scripts": {
-    "start": "deno run --deny-env --allow-read main.ts",
-    "compile": "deno compile --deny-env --allow-read -o bin/v8-to-istanbul-cli main.ts",
-    "install-global": "deno install --deny-env --allow-read --global --force --name v8-to-istanbul ./main.ts",
+    "start": "deno run --deny-env --allow-read --allow-write main.ts",
+    "compile": "deno compile --deny-env --allow-read --allow-write -o bin/v8-to-istanbul-cli main.ts",
+    "install-global": "deno install --deny-env --allow-read --allow-write --global --force --name v8-to-istanbul ./main.ts",
     "lint": "deno lint",
     "format": "deno fmt"
   },
   "author": "aapzu",
   "license": "MIT",
+  "dependencies": {
+    "@types/istanbul-lib-report": "^3.0.3",
+    "@types/istanbul-reports": "^3.0.4",
+    "istanbul-lib-report": "^3.0.1",
+    "istanbul-reports": "^3.1.7"
+  },
   "devDependencies": {
     "@types/glob-to-regexp": "^0.4.4",
     "@types/istanbul-lib-coverage": "^2.0.6",
