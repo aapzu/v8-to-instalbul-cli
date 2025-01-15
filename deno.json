@@ -1,0 +1,15 @@
+{
+  "tasks": {
+    "start": "deno run --deny-env --allow-read main.ts"
+  },
+  "imports": {
+    "@types/glob-to-regexp": "npm:@types/glob-to-regexp@^0.4.4",
+    "@types/istanbul-lib-coverage": "npm:@types/istanbul-lib-coverage@^2.0.6",
+    "@types/yargs": "npm:@types/yargs@^17.0.33",
+    "glob-to-regexp": "npm:glob-to-regexp@^0.4.1",
+    "istanbul-lib-coverage": "npm:istanbul-lib-coverage@^3.2.2",
+    "v8-to-istanbul": "npm:v8-to-istanbul@^9.3.0",
+    "yargs": "npm:yargs@^17.7.2",
+    "zod": "npm:zod@^3.24.1"
+  }
+}
