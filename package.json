@@ -12,6 +12,7 @@
   "scripts": {
     "start": "deno run --deny-env --allow-read main.ts",
     "compile": "deno compile --deny-env --allow-read -o bin/v8-to-istanbul-cli main.ts",
+    "install-global": "deno install --deny-env --allow-read --global --force --name v8-to-istanbul ./main.ts",
     "lint": "deno lint",
     "format": "deno fmt"
   },

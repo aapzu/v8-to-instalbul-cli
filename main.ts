@@ -1,8 +1,8 @@
-import yargs from "yargs";
-import v8toIstanbul from "v8-to-istanbul";
-import libCoverage from "istanbul-lib-coverage";
-import { z } from "zod";
-import globToRegex from "glob-to-regexp";
+import yargs from "npm:yargs";
+import v8toIstanbul from "npm:v8-to-istanbul";
+import libCoverage from "npm:istanbul-lib-coverage";
+import { z } from "npm:zod";
+import globToRegex from "npm:glob-to-regexp";
 import pkg from "./package.json" with { type: "json" };
 
 const v8CoverageJsonSchema = z.object({
