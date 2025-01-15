@@ -3,6 +3,7 @@ import v8toIstanbul from "v8-to-istanbul";
 import libCoverage from "istanbul-lib-coverage";
 import { z } from "zod";
 import globToRegex from "glob-to-regexp";
+import pkg from "./package.json" with { type: "json" };
 
 const v8CoverageJsonSchema = z.object({
   result: z.array(
@@ -17,15 +18,16 @@ const v8CoverageJsonSchema = z.object({
               startOffset: z.number(),
               endOffset: z.number(),
               count: z.number(),
-            })
+            }),
           ),
-        })
+        }),
       ),
-    })
+    }),
   ),
 });
 
 const { coveragePath, output, exclude } = yargs(Deno.args)
+  .scriptName(Object.keys(pkg.bin)[0])
   .option("coveragePath", {
     alias: ["c", "p"],
     describe: "The path to the coverage file or directory",
@@ -51,25 +53,18 @@ const { coveragePath, output, exclude } = yargs(Deno.args)
 
 const map = libCoverage.createCoverageMap();
 
-const coverageJsonFiles = [];
+const coverageJsonFiles = Deno.statSync(coveragePath).isDirectory
+  ? Array.from(Deno.readDirSync(coveragePath))
+    .filter((file) =>
+      file.name.startsWith("coverage") && file.name.endsWith(".json")
+    )
+    .map((file) => `${coveragePath}/${file.name}`)
+  : [coveragePath];
 
-if ((await Deno.stat(coveragePath)).isDirectory) {
-  for await (const file of Deno.readDir(coveragePath)) {
-    if (file.name.startsWith("coverage") && file.name.endsWith(".json")) {
-      coverageJsonFiles.push(`${coveragePath}/${file.name}`);
-    }
-  }
-} else {
-  coverageJsonFiles.push(coveragePath);
-}
-
-const coverages = await Promise.all(
-  coverageJsonFiles.map(async (filePath) => {
-    const coverageJsonUintArray = await Deno.readFile(filePath);
-    return v8CoverageJsonSchema.parse(
-      JSON.parse(new TextDecoder().decode(coverageJsonUintArray))
-    );
-  })
+const coverages = coverageJsonFiles.map((filePath) =>
+  v8CoverageJsonSchema.parse(
+    JSON.parse(new TextDecoder().decode(Deno.readFileSync(filePath))),
+  )
 );
 
 const fileResults = coverages.flatMap((coverage) =>
@@ -84,7 +79,7 @@ await Promise.all(
     }))
     .filter(
       ({ filePath }) =>
-        !exclude.some((pattern) => globToRegex(pattern).test(filePath))
+        !exclude.some((pattern) => globToRegex(pattern).test(filePath)),
     )
     .map(async ({ filePath, result }) => {
       const converter = v8toIstanbul(filePath);
@@ -94,10 +89,10 @@ await Promise.all(
         map.merge(converter.toIstanbul());
       } catch (error) {
         console.error(
-          `Error processing ${filePath}: ${(error as Error)?.message}`
+          `Error processing ${filePath}: ${(error as Error)?.message}`,
         );
       }
-    })
+    }),
 );
 
 const coverageSummary = map.getCoverageSummary();
@@ -106,9 +101,10 @@ console.info(coverageSummary);
 const outputString = JSON.stringify(map, null, 2);
 
 if (output) {
-  fs.writeFileSync(output, outputString);
+  const encoder = new TextEncoder();
+  Deno.writeFileSync(output, encoder.encode(outputString));
 } else {
   console.info(
-    "No output file specified. Use the --output option to specify an output file."
+    "No output file specified. Use the --output option to specify an output file.",
   );
 }
