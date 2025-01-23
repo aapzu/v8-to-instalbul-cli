@@ -10,7 +10,7 @@ const v8CoverageJsonSchema = z.object({
       url: z.string(),
       functions: z.array(
         z.object({
-          functionName: z.string(),
+          functionName: z.string().optional(),
           isBlockCoverage: z.boolean(),
           ranges: z.array(
             z.object({

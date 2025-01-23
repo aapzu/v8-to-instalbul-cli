@@ -2,7 +2,7 @@
 import yargs from "npm:yargs";
 import pkg from "./package.json" with { type: "json" };
 import { createCoverageMap } from "./src/coverage.ts";
-import { writeOutput } from "./src/output.ts";
+import { createReport } from "./src/report.ts";
 
 const {
   coveragePath,
@@ -43,13 +43,13 @@ const {
     choices: ["json", "html", "lcov", "lcovonly", "text-summary", "text"],
     default: "json",
   })
-  .conflicts("output", "output-dir")
+  .conflicts("output-file", "output-dir")
   .help()
   .parseSync();
 
 const coverageMap = await createCoverageMap({ coveragePath, exclude });
 
-writeOutput(coverageMap, {
+createReport(coverageMap, {
   outputType,
   outputFile,
   outputDir,

@@ -10,9 +10,9 @@
     "v82i": "./bin/v8-to-istanbul-cli"
   },
   "scripts": {
-    "start": "deno run --deny-env --allow-read --allow-write main.ts",
-    "compile": "deno compile --deny-env --allow-read --allow-write -o bin/v8-to-istanbul-cli main.ts",
-    "install-global": "deno install --deny-env --allow-read --allow-write --global --force --name v8-to-istanbul ./main.ts",
+    "start": "deno run --deny-env --allow-read --allow-write --allow-sys=cpus main.ts",
+    "compile": "deno compile --deny-env --allow-read --allow-write --allow-sys=cpus -o bin/v8-to-istanbul-cli main.ts",
+    "install-global": "deno install --deny-env --allow-read --allow-write --allow-sys=cpus --global --force --name v8-to-istanbul ./main.ts",
     "lint": "deno lint",
     "format": "deno fmt"
   },
@@ -21,6 +21,7 @@
   "dependencies": {
     "@types/istanbul-lib-report": "^3.0.3",
     "@types/istanbul-reports": "^3.0.4",
+    "fast-glob": "^3.3.3",
     "istanbul-lib-report": "^3.0.1",
     "istanbul-reports": "^3.1.7"
   },
